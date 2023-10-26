@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Local Storage</title>
+    <style>
+      .passport-section {
+        display: flex;
+        align-items: center; /* Vertically aligns the items in the center */
+        justify-content: center;
+      }
+
+      .passport-photo {
+        width: 100px; /* passport width */
+        height: 130px; /* Passport height*/
+        margin-right: 20px; /* Space between the photo and the text */
+      }
+
+      p {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .table-div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .buttons-div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .button-style {
+        padding: 20px;
+        margin: 5px;
+      }
+
+      td {
+        text-align: center;
+      }
+    </style>
+    <script type="text/javascript">
+      const localStorage = window.localStorage;
+      const initialize = () => {
+        if (localStorage) {
+          const count = localStorage.getItem("visitCount") || 0;
+          const newCount = parseInt(count) + 1;
+          localStorage.setItem("visitCount", newCount);
+        }
+        updateDOM();
+      };
+
+      const updateDOM = () => {
+        const count = localStorage.getItem("visitCount") || 0;
+        const storedPreferences = localStorage.getItem("preference");
+        const preference = storedPreferences
+          ? JSON.parse(storedPreferences)
+          : {};
+        const tableBody = document.getElementById("tableBody");
+        tableBody.innerHTML = ""; // Clear the table
+
+        // Add visitCount row
+        let tr = document.createElement("tr");
+        let tdKey = document.createElement("td");
+        tdKey.appendChild(document.createTextNode("visitCount"));
+        let tdValue = document.createElement("td");
+        tdValue.appendChild(document.createTextNode(count));
+        tr.appendChild(tdKey);
+        tr.appendChild(tdValue);
+        tableBody.appendChild(tr);
+
+        // Add preference row
+        tr = document.createElement("tr");
+        tdKey = document.createElement("td");
+        tdKey.appendChild(document.createTextNode("preference"));
+        tdValue = document.createElement("td");
+        tdValue.appendChild(document.createTextNode(storedPreferences || "{}"));
+        tr.appendChild(tdKey);
+        tr.appendChild(tdValue);
+        tableBody.appendChild(tr);
+
+        document.body.style.background = preference.color || "white";
+      };
+
+      const setColorPreference = (color) => {
+        const localStorage = window.localStorage;
+        const preference = { color };
+        localStorage.setItem("preference", JSON.stringify(preference));
+        updateDOM();
+      };
+
+      const removeCount = () => {
+        localStorage.removeItem("visitCount");
+        updateDOM();
+      };
+
+      const clearAll = () => {
+        localStorage.clear();
+        updateDOM();
+      };
+
+      const showAllStoredKeyValues = () => {
+        console.log(`we have ${localStorage.length} values`);
+        const ul = document.getElementById("storedItems");
+        ul.innerHTML = "";
+        for (let index = 0; index < localStorage.length; index++) {
+          const key = localStorage.key(index);
+          var li = document.createElement("li");
+          li.appendChild(
+            document.createTextNode(`${key} = ${localStorage.getItem(key)}`)
+          );
+          ul.appendChild(li);
+        }
+      };
+    </script>
+  </head>
+  <body onload="initialize()">
+    <ui id="storedItems"></ui>
+
+    <div class="passport-section">
+      <img src="passport.jpeg" alt="Passport Photo" class="passport-photo" />
+    </div>
+
+    <p class="passport-text"><b>Name : Jonathan Kariuki</b></p>
+    <p class="passport-text"><b>RegNO: SCT221-0102/2021</b></p>
+
+    <div class="table-div">
+      <table border="1" style="width: 65%">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Table rows will be added here dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="buttons-div">
+      <button
+        type="button"
+        class="button-style"
+        onclick="setColorPreference('red')"
+      >
+        Red
+      </button>
+      <button
+        type="button"
+        class="button-style"
+        onclick="setColorPreference('green')"
+      >
+        Green
+      </button>
+      <button
+        type="button"
+        class="button-style"
+        onclick="setColorPreference('blue')"
+      >
+        Blue
+      </button>
+      <div id="visitCount"></div>
+      <button type="button" class="button-style" onclick="removeCount()">
+        Remove count
+      </button>
+      <button type="button" class="button-style" onclick="clearAll()">
+        Clear all
+      </button>
+    </div>
+  </body>
+</html>
